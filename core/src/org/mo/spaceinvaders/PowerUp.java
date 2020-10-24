@@ -1,22 +1,33 @@
 package org.mo.spaceinvaders;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-public class PowerUp {
+public class PowerUp extends GameObject{
 
-    Vector2 position;
-    Rectangle rectangle;
+
 
     public PowerUp(Vector2 position, Texture txt) {
-        this.position = position;
-        this.rectangle = (new Sprite(txt)).getBoundingRectangle();
-        this.rectangle.setX(position.x);
-        this.rectangle.setY(position.y);
-        this.rectangle.setWidth(txt.getWidth());
-        this.rectangle.setHeight(txt.getHeight());
+        super(position, txt);
     }
 
+    public void update()
+    {
+        return;
+    }
+
+    public boolean overlaps(Rectangle r)
+    {
+        float x, y, width, height;
+        x = position.x;
+        y = position.y;
+        width = rectangle.width;
+        height = rectangle.height;
+
+        return x < r.x + r.width && x + width > r.x && y < r.y + r.height && y + height > r.y;
+    }
 }

@@ -123,7 +123,7 @@ public class SpaceInvadersGame extends ApplicationAdapter {
             powerUps.add(new PowerUp(new Vector2(rnd.nextInt((int) HEIGHT), rnd.nextInt((int) WIDTH)), powerup));
         }
 
-        if (this.pos.x + this.img.getHeight() > Gdx.graphics.getWidth()
+        /*if (this.pos.x + this.img.getHeight() > Gdx.graphics.getWidth()
                 || this.pos.x < 0) {
 
             this.dpos = this.dpos.mul(SpaceInvadersGame.BOUNCE_HORIZONTAL).scl(SpaceInvadersGame.BOUNCE_COEF);
@@ -142,7 +142,9 @@ public class SpaceInvadersGame extends ApplicationAdapter {
                 this.pos.y = WIDTH;
         }
 
-        this.pos = this.pos.add(this.dpos);
+        this.pos = this.pos.add(this.dpos);*/
+
+
 
 
 
