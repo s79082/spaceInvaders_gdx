@@ -1,18 +1,29 @@
 package org.mo.spaceinvaders;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 
-public class Bullet
+public class Bullet extends GameObject
 {
-    public Vector2 pos, vel;
+    public Vector2 vel;
 
-    public Bullet(Vector2 pos, Vector2 vel) {
-        this.pos = pos;
+    public Bullet(Vector2 pos, Vector2 vel, Texture t) {
+        super(pos, t);
         this.vel = vel;
     }
 
-    public void move()
-    {
-        this.pos = this.pos.add(this.vel);
+    @Override
+    public void update() {
+        this.move(vel);
+
+        // out of screen
+        if (this.sprite.getX() < 0)
+            try {
+                this.finalize();
+            }
+        catch (Throwable t)
+        {
+            t.printStackTrace();
+        }
     }
 }

@@ -12,7 +12,7 @@ public class Player extends GameObject
 {
 
     // displacement per frame
-    private Vector2 dpos;
+    public Vector2 dpos;
 
     public Player(Vector2 p, Texture t)
     {
@@ -34,25 +34,8 @@ public class Player extends GameObject
     @Override
     public void update()
     {
-        if (this.position.x + this.texture.getHeight() > Gdx.graphics.getWidth()
-                || this.position.x < 0) {
 
-            this.dpos = this.dpos.mul(SpaceInvadersGame.BOUNCE_HORIZONTAL).scl(SpaceInvadersGame.BOUNCE_COEF);
-            if(this.position.x < 0)
-                this.position.x = 0;
-            else
-                this.position.x = HEIGHT;
-        }
+       // this.move(dpos);
 
-        if (this.position.y > WIDTH || this.position.y < 0) {
-            this.dpos = this.dpos.mul(SpaceInvadersGame.BOUNCE_VERTICAL).scl(SpaceInvadersGame.BOUNCE_COEF);
-
-            if(this.position.y < 0)
-                this.position.y = 0;
-            else
-                this.position.y = WIDTH;
-        }
-
-        this.position = this.position.add(this.dpos);
     }
 }

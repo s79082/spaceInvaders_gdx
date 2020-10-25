@@ -1,15 +1,17 @@
 package org.mo.spaceinvaders;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
 
-public class TouchInputProcessor implements InputProcessor {
+// handles input for one Player
+public class PlayerInputProcessor implements InputProcessor {
 
-    private SpaceInvadersGame game;
+    Player player;
+    private Vector2 touchPos;
 
-    public TouchInputProcessor(SpaceInvadersGame g)
-    {
-        this.game = g;
+    public PlayerInputProcessor(Player p) {
+        this.player = p;
     }
 
     @Override
@@ -40,7 +42,27 @@ public class TouchInputProcessor implements InputProcessor {
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
 
-        return false;
+        float dist_y;
+        float touch_y = SpaceInvadersGame.WIDTH - screenY;
+        dist_y = player.getPosition().y - touch_y;
+
+        player.dpos = Vector2.Y.scl(dist_y * 0.05f);
+
+
+        Gdx.app.log("xpos", String.valueOf(player.getPosition().x));
+        Gdx.app.log("ypos", String.valueOf(player.getPosition().y));
+
+        Gdx.app.log("dist", String.valueOf(dist_y));
+
+
+        /*
+        Vector2 touch, dist;
+        touch = TouchInputProcessor.deviceCoordsToGameCoords(screenX, screenY);
+        dist = touch.sub(player.getPosition());
+        player.dpos = dist.scl(0.05f);
+
+         */
+        return true;
     }
 
     @Override
@@ -51,10 +73,5 @@ public class TouchInputProcessor implements InputProcessor {
     @Override
     public boolean scrolled(int amount) {
         return false;
-    }
-
-    public static Vector2 deviceCoordsToGameCoords(int x, int y)
-    {
-        return new Vector2(x, SpaceInvadersGame.WIDTH - y);
     }
 }

@@ -20,19 +20,14 @@ import java.util.Random;
 
 public class SpaceInvadersGame extends ApplicationAdapter {
     SpriteBatch batch;
-    Texture img, txt, powerup;
-
-    Sprite playerSprite;
 
     AssetManager assetManager = new AssetManager();
     AssetDescriptor<Texture> playerTextureAssetDesc, bulletTextureAssetDesc;
 
     OrthographicCamera camera;
 
-    Vector2 pos, touch, dist, dpos;
-
-    List<Vector2> powerup_pos;
-    List<PowerUp> powerUps;
+    Player player;
+    List<Bullet> bullets;
 
     Random rnd;
 
@@ -62,40 +57,28 @@ public class SpaceInvadersGame extends ApplicationAdapter {
 
     @Override
     public void create() {
-        float WIDTH, HEIGHT;
-        WIDTH = Gdx.graphics.getWidth();
-        HEIGHT = Gdx.graphics.getHeight();
+        WIDTH = Gdx.graphics.getHeight();
+        HEIGHT = Gdx.graphics.getWidth();
 
         playerTextureAssetDesc = new AssetDescriptor<>("badlogic.jpg", Texture.class);
         bulletTextureAssetDesc = new AssetDescriptor<>("badlogic.jpg", Texture.class);
         batch = new SpriteBatch();
-        //img = new Texture("badlogic.jpg");
+
+        Texture player_txt;
         assetManager.load(playerTextureAssetDesc);
         assetManager.load(bulletTextureAssetDesc);
         assetManager.finishLoading();
-        img = assetManager.get(playerTextureAssetDesc);
+        player_txt = assetManager.get(playerTextureAssetDesc);
+        this.player = new Player(new Vector2(HEIGHT - player_txt.getHeight(), WIDTH / 2),
+                                player_txt);
 
 
-        camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getWidth() * (HEIGHT/WIDTH));
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, WIDTH, WIDTH * (HEIGHT/WIDTH));
 
-        //assetManager.load(playerTextureAssetDesc);
-        //assetManager.load("powerup.jpg", Texture.class);
-        //assetManager.get(playerTextureAssetDesc);
-        //assetManager.get("powerup.jpg", Texture.class);
-
-        this.pos = new Vector2(HEIGHT, 0);
-        this.touch = Vector2.Zero;
-        this.dist = Vector2.Zero;
-        this.dpos = Vector2.Zero;
-
-        playerSprite = new Sprite(img, (int) WIDTH, (int)HEIGHT, (int) this.pos.x, (int) this.pos.y);
-
-
-        Gdx.input.setInputProcessor(new TouchInputProcessor(this));
-
-        powerup_pos = new ArrayList<>();
-        powerUps = new ArrayList<>();
+        // set input
+        //Gdx.input.setInputProcessor(new TouchInputProcessor(this));
+        Gdx.input.setInputProcessor(new PlayerInputProcessor(player));
         rnd = new Random();
 
 
@@ -106,76 +89,41 @@ public class SpaceInvadersGame extends ApplicationAdapter {
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        //assetManager.update();
+        Texture bullet_txt, player_txt;
 
         assetManager.load(playerTextureAssetDesc);
         assetManager.load(bulletTextureAssetDesc);
         assetManager.finishLoading();
-        img = assetManager.get(playerTextureAssetDesc);
-        powerup = assetManager.get(bulletTextureAssetDesc);
+        player_txt = assetManager.get(playerTextureAssetDesc);
+        bullet_txt = assetManager.get(bulletTextureAssetDesc);
 
+        /*
         spawnTimer += Gdx.graphics.getDeltaTime();
         if (spawnTimer >= spawnInterval)
         {
             spawnTimer = 0;
 
-            //powerup_pos.add(new Vector2(rnd.nextInt((int) HEIGHT), rnd.nextInt((int) WIDTH)));
-            powerUps.add(new PowerUp(new Vector2(rnd.nextInt((int) HEIGHT), rnd.nextInt((int) WIDTH)), powerup));
+            this.bullets.add(new Bullet(player.position, Vector2.X.scl(-10f), bullet_txt));
         }
 
-        /*if (this.pos.x + this.img.getHeight() > Gdx.graphics.getWidth()
-                || this.pos.x < 0) {
-
-            this.dpos = this.dpos.mul(SpaceInvadersGame.BOUNCE_HORIZONTAL).scl(SpaceInvadersGame.BOUNCE_COEF);
-            if(this.pos.x < 0)
-                this.pos.x = 0;
-            else
-                this.pos.x = HEIGHT;
-        }
-
-        if (this.pos.y > WIDTH || this.pos.y < 0) {
-            this.dpos = this.dpos.mul(SpaceInvadersGame.BOUNCE_VERTICAL).scl(SpaceInvadersGame.BOUNCE_COEF);
-
-            if(this.pos.y < 0)
-                this.pos.y = 0;
-            else
-                this.pos.y = WIDTH;
-        }
-
-        this.pos = this.pos.add(this.dpos);*/
-
-
-
-
+         */
 
 
         batch.begin();
         batch.setProjectionMatrix(camera.combined);
-
-        Rectangle playerRectangle = this.playerSprite.getBoundingRectangle();
-        playerRectangle.setX(pos.x);
-        playerRectangle.setY(pos.y);
-
-        //for (PowerUp p: this.powerUps)
-        PowerUp p;
-        for (Iterator<PowerUp> it = this.powerUps.iterator(); it.hasNext();)
+        /*
+        Bullet b;
+        for (Iterator<Bullet> it = this.bullets.iterator(); it.hasNext();)
         {
-            p = it.next();
-            powerup = assetManager.get(playerTextureAssetDesc);
+            b = it.next();
+            b.update();
+            b.render(batch);
 
-            Rectangle rect = p.rectangle;
-            if (rect.overlaps(playerRectangle))
-            {
-                Gdx.app.log("col", "collisoion");
-                // power up collected
-                it.remove();
-                this.dpos = this.dpos.scl(5f);
-            }else
-                batch.draw(powerup, p.position.x, p.position.y);
-            //batch.draw(p.getTexture(), p.getX(), p.getY());
 
-        }
-        batch.draw(img, this.pos.x, this.pos.y);
+        }*/
+        player.update();
+        player.render(batch);
+        //batch.draw(img, this.pos.x, this.pos.y);
 
         //assetManager.load(playerTextureAssetDesc);
         //txt = assetManager.get(playerTextureAssetDesc);
@@ -188,7 +136,6 @@ public class SpaceInvadersGame extends ApplicationAdapter {
     @Override
     public void dispose() {
         batch.dispose();
-        img.dispose();
     }
 
     public boolean overlaps(float x, float y, float w, float h)
@@ -198,18 +145,4 @@ public class SpaceInvadersGame extends ApplicationAdapter {
 
     }
 
-    public void calcMovement(float x, float y) {
-        Gdx.app.log("x", String.valueOf(x));
-        Gdx.app.log("y", String.valueOf(y));
-        Gdx.app.log("xpos", String.valueOf(this.pos.x));
-        Gdx.app.log("ypos", String.valueOf(this.pos.y));
-
-        this.touch = new Vector2(x, Gdx.graphics.getHeight() - y);
-        //this.touch = new Vector2(x, y);
-
-        this.dist = this.touch.sub(this.pos);
-        this.dpos = this.dist.scl(0.05f);
-
-
-    }
 }

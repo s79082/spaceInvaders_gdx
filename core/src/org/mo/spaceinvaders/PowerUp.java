@@ -20,6 +20,7 @@ public class PowerUp extends GameObject{
         return;
     }
 
+    /*
     public boolean overlaps(Rectangle r)
     {
         float x, y, width, height;
@@ -30,4 +31,6 @@ public class PowerUp extends GameObject{
 
         return x < r.x + r.width && x + width > r.x && y < r.y + r.height && y + height > r.y;
     }
+
+     */
 }
