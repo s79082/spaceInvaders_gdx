@@ -15,15 +15,5 @@ public class Bullet extends GameObject
     @Override
     public void update() {
         this.move(vel);
-
-        // out of screen
-        if (this.sprite.getX() < 0)
-            try {
-                this.finalize();
-            }
-        catch (Throwable t)
-        {
-            t.printStackTrace();
-        }
     }
 }

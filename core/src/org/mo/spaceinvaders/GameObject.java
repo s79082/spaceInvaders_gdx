@@ -15,7 +15,10 @@ public abstract class GameObject
     //Rectangle rectangle;
     //Texture texture;
     Sprite sprite;
-    private Vector2 position;
+    protected Vector2 position;
+    protected float rotation;
+    protected Vector2 scale;
+    Rectangle rectangle;
 
     public abstract void update();
 
@@ -25,6 +28,11 @@ public abstract class GameObject
         this.sprite = new Sprite(txt, (int) position.x, (int) position.y, (int) WIDTH, (int) HEIGHT);
         this.position = new Vector2(position);
         sprite.setPosition(position.x, position.y);
+
+        this.rotation = 0;
+        this.scale = new Vector2(1, 1);
+        this.rectangle = new Rectangle(position.x, position.y, sprite.getTexture().getWidth(),
+                sprite.getTexture().getHeight());
         //this.rectangle = sprite.getBoundingRectangle();
         //this.rectangle.setX(position.x);
         //this.rectangle.setY(position.y);
@@ -34,16 +42,29 @@ public abstract class GameObject
 
     public void move(Vector2 dis)
     {
-        //this.position = this.position.add(dis);
+        this.position = this.position.add(dis);
         Vector2 tmp = new Vector2(sprite.getX(), sprite.getY());
         tmp = tmp.add(dis);
         sprite.setPosition(tmp.x, tmp.y);
-        this.position.add(dis);
+        this.rectangle.setX(tmp.x);
+        this.rectangle.setY(tmp.y);
+        //this.position.add(dis);
+    }
+
+    public void scale(float scaleX, float scaleY)
+    {
+        scale.x *= scaleX;
+        scale.y *= scaleY;
+    }
+
+    public void rotate(float ang)
+    {
+        rotation += ang;
     }
 
     public Vector2 getPosition()
     {
-        Gdx.app.log("xpos", String.valueOf(sprite.getX()));
+        //Gdx.app.log("xpos", String.valueOf(sprite.getX()));
 
         //return new Vector2(sprite.getX(), sprite.getY());
         return position;
@@ -52,6 +73,12 @@ public abstract class GameObject
     public void render(SpriteBatch batch)
     {
         //this.sprite.draw(batch);
-        batch.draw(sprite, position.x, position.y);
+        Texture texture = sprite.getTexture();
+        batch.draw(texture, position.x , position.y, texture.getWidth() / 2,
+                texture.getHeight() / 2, texture.getWidth(), texture.getHeight()
+                ,scale.x, scale.y, rotation, 0,0, texture.getWidth(), texture.getHeight(),
+                false, false);
+        //batch.draw(texture, position.x , position.y);
+        //batch.draw(sprite.getTexture());
     }
 }

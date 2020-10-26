@@ -17,13 +17,17 @@ public class Player extends GameObject
     public Player(Vector2 p, Texture t)
     {
         super(p, t);
-        this.dpos = Vector2.Zero;
+        this.dpos = Vector2.Y;
     }
 
     public Vector2 getCenter()
     {
         //return new Vector2(position.x + (size.x / 2), position.y + (size.y / 2));
-        return Vector2.Zero;
+        Vector2 tmp = new Vector2(position);
+        tmp.x += sprite.getTexture().getHeight() / 2;
+        tmp.y += sprite.getTexture().getWidth() / 2;
+        return tmp;
+
     }
 
     public float getLowerEdge()
@@ -35,7 +39,12 @@ public class Player extends GameObject
     public void update()
     {
 
-       // this.move(dpos);
+       this.move(dpos);
+       float pos = getPosition().y;
+       if (pos < 0)
+           position.y = 0;
+        //Gdx.app.log("moving", String.valueOf(dpos.y));
+
 
     }
 }

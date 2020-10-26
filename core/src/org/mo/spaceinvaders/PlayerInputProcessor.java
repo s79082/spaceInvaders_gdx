@@ -2,6 +2,7 @@ package org.mo.spaceinvaders;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 
 // handles input for one Player
@@ -43,14 +44,19 @@ public class PlayerInputProcessor implements InputProcessor {
     public boolean touchDragged(int screenX, int screenY, int pointer) {
 
         float dist_y;
-        float touch_y = SpaceInvadersGame.WIDTH - screenY;
-        dist_y = player.getPosition().y - touch_y;
+        float touch_y = SpaceInvadersGame.HEIGHT - screenY;
+        dist_y = touch_y- player.getPosition().y ;
 
-        player.dpos = Vector2.Y.scl(dist_y * 0.05f);
+        player.dpos = Vector2.Zero;
+
+        player.position.y = touch_y;
 
 
-        Gdx.app.log("xpos", String.valueOf(player.getPosition().x));
-        Gdx.app.log("ypos", String.valueOf(player.getPosition().y));
+        Gdx.app.log("devY", String.valueOf(touch_y));
+        Gdx.app.log("x", String.valueOf(screenX));
+
+        Gdx.app.log("playerY", String.valueOf(player.getPosition().y));
+        Gdx.app.log("disp", String.valueOf(player.dpos));
 
         Gdx.app.log("dist", String.valueOf(dist_y));
 
