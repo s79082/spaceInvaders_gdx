@@ -155,7 +155,6 @@ public class SpaceInvadersGame extends ApplicationAdapter {
         {
             e = it.next();
 
-            if (e.position.y > HEIGHT)
             if (e.position.x > WIDTH - player_txt.getHeight())
                 it.remove();
         }
