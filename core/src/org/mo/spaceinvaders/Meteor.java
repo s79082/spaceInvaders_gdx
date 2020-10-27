@@ -12,6 +12,8 @@ public class Meteor extends Enemie {
 
     public Meteor(Vector2 pos, Texture t) {
         super(pos, t);
+        idle = new Animator(pos, new Texture("meteor.png"), 4, 1, 0.25f);
+        idle.scale(1.7f, 1.7f);
         movementSequence = new MeteorMovementSequence();
     }
 

@@ -7,13 +7,17 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Widget;
+
+import org.w3c.dom.ls.LSInput;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -36,30 +40,17 @@ public class SpaceInvadersGame extends ApplicationAdapter {
 
     ShapeRenderer renderer;
 
-    
+    List<Explosion> explosions;
+
 
     float spawnTimer = 0,
-            spawnInterval = 1f;
+            spawnInterval = 1f,
+    bulletTimer = 0,
+    bulletInterval = 0.5f;
 
     //public static float WIDTH = 800;
     //public static float HEIGHT = 1800;
     public static float WIDTH, HEIGHT;
-
-    public static Matrix3 BOUNCE_HORIZONTAL = new Matrix3(new float[]
-            {
-                    -1, 0, 0,
-                    0, 1, 0,
-                    0, 0, 0
-            }
-    );
-
-    public static Matrix3 BOUNCE_VERTICAL = new Matrix3(new float[]
-            {
-                    1, 0, 0,
-                    0, -1, 0,
-                    0, 0, 0,
-            }
-    );
 
     public static float BOUNCE_COEF = 0.75f;
 
@@ -96,11 +87,12 @@ public class SpaceInvadersGame extends ApplicationAdapter {
 
         renderer = new ShapeRenderer();
 
+        explosions = new ArrayList<>();
     }
 
     @Override
     public void render() {
-        Gdx.gl.glClearColor(0, 1, 0, 1);
+        Gdx.gl.glClearColor(0, 0, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         Texture bullet_txt, player_txt;
@@ -115,18 +107,22 @@ public class SpaceInvadersGame extends ApplicationAdapter {
         spawnTimer += Gdx.graphics.getDeltaTime();
         if (spawnTimer >= spawnInterval)
         {
-            Gdx.app.log("spawn", "jh");
             spawnTimer = 0;
-            bullet_txt = assetManager.get(bulletTextureAssetDesc);
+            this.enemies.add(new Meteor(new Vector2(0, rnd.nextInt((int) HEIGHT)), player_txt));
 
+        }
+
+        bulletTimer += Gdx.graphics.getDeltaTime();
+        if (bulletTimer >= bulletInterval)
+        {
+            bulletTimer = 0;
+            bullet_txt = assetManager.get(bulletTextureAssetDesc);
             Vector2 center = player.getCenter();
             center.y -= bullet_txt.getWidth() / 2;
-            b = new Bullet(center, new Vector2(Vector2.X).scl(-10f), bullet_txt);
+            b = new Bullet(center, new Vector2(Vector2.X).scl(-15f), bullet_txt);
             b.rotate(90);
+            b.scale(3, 3);
             this.bullets.add(b);
-
-            this.enemies.add(new Meteor(new Vector2(0, HEIGHT / 2), player_txt));
-
         }
         for (Bullet bullet: bullets) {
             bullet.update();
@@ -159,24 +155,12 @@ public class SpaceInvadersGame extends ApplicationAdapter {
         {
             e = it.next();
 
+            if (e.position.y > HEIGHT)
             if (e.position.x > WIDTH - player_txt.getHeight())
                 it.remove();
-            /*else
-
-            for (Iterator<Bullet> bullet_it = this.bullets.iterator(); bullet_it.hasNext();)
-            {
-                b = bullet_it.next();
-                if (b.sprite.getBoundingRectangle().overlaps(e.sprite.getBoundingRectangle()))
-                {
-                    it.remove();
-                    bullet_it.remove();
-                }
-            }*/
-
-
-
         }
 
+        // check if enemy hits a bullet, remove bullet, add hit enemy
         List<Integer> remove_enemies = new ArrayList<>();
         for (Iterator<Bullet> it = this.bullets.iterator(); it.hasNext();) {
             b = it.next();
@@ -193,9 +177,12 @@ public class SpaceInvadersGame extends ApplicationAdapter {
             }
         }
 
-        for (int i: remove_enemies)
+        // remove hit enemies, add Explosion
+        for (int i: remove_enemies) {
+            explosions.add(new Explosion(enemies.get(i).position));
             enemies.remove(i);
 
+        }
         for (Bullet bullet: bullets)
             bullet.render(batch);
 
@@ -204,18 +191,29 @@ public class SpaceInvadersGame extends ApplicationAdapter {
 
 
         player.render(batch);
-        //batch.draw(img, this.pos.x, this.pos.y);
 
-        //assetManager.load(playerTextureAssetDesc);
-        //txt = assetManager.get(playerTextureAssetDesc);
-//		batch.draw(txt, 0, 0);
+        Explosion explosion;
+        for(Iterator<Explosion> explosionIterator = explosions.iterator();
+            explosionIterator.hasNext();)
+        {
+            explosion = explosionIterator.next();
+
+            explosion.update();
+
+            if(!explosion.toDraw)
+                explosionIterator.remove();
+        }
+
+        for(Explosion ex: explosions)
+        {
+            ex.render(batch);
+        }
+
+        //explosion.render(batch);
+
         batch.end();
 
-        /*renderer.begin(ShapeRenderer.ShapeType.Line);
-        renderer.line(player.getPosition(), player.getPosition().sub(Vector2.X.scl(-HEIGHT)));
-        renderer.end();*/
-
-        Gdx.gl.glLineWidth(1);
+        //Gdx.gl.glLineWidth(1);
     }
 
     @Override
